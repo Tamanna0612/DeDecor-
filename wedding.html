@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Planning Gallery – De Décor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — identical to landing page
+   ═══════════════════════════════════════════ */
+:root {
+  --ivory:      #faf6f0;
+  --cream:      #f4ede0;
+  --blush:      #e8c9b0;
+  --peach:      #f0c8a8;
+  --rose:       #c9906a;
+  --gold:       #b89a72;
+  --gold-light: #d4b896;
+  --gold-deep:  #a07848;
+  --charcoal:   #2c2620;
+  --warm-grey:  #8a7968;
+  --text:       #3d3228;
+  --glass:      rgba(250,246,240,0.88);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--ivory);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE ENTRANCE — slides up dark panel on load
+   (Mirrors the exit from landing page)
+   ═══════════════════════════════════════════ */
+.page-enter {
+  position: fixed; inset: 0;
+  background: var(--charcoal);
+  z-index: 99999;
+  animation: pageReveal 0.75s cubic-bezier(.77,0,.175,1) forwards;
+}
+@keyframes pageReveal {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+/* Page exit overlay (for "Back to Home") */
+.page-transition-overlay {
+  position: fixed; inset: 0;
+  background: var(--charcoal);
+  z-index: 99999;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.55s cubic-bezier(.77,0,.175,1);
+}
+.page-transition-overlay.active { opacity: 1; pointer-events: all; }
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR
+   ═══════════════════════════════════════════ */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--gold); border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transition: transform 0.15s ease;
+  mix-blend-mode: multiply;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid var(--gold); border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR — always glass (wedding page has no
+   hero that needs transparent nav)
+   ═══════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 20px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(184,154,114,0.2);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 300;
+  letter-spacing: 4px; color: var(--charcoal);
+  text-decoration: none;
+}
+/* Back to Home button — left side with arrow */
+.nav-back {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--warm-grey); text-decoration: none;
+  transition: color 0.3s; cursor: pointer;
+}
+.nav-back:hover { color: var(--charcoal); }
+.nav-back::before { content: '←'; font-size: 18px; }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--warm-grey); text-decoration: none; transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 1px; background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+.nav-links a:hover { color: var(--charcoal); }
+
+/* Mobile hamburger */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 4px;
+}
+.hamburger span { display: block; width: 24px; height: 1px; background: var(--charcoal); transition: all 0.3s; }
+.mobile-nav {
+  display: none; position: fixed; top: 0; right: -100%; bottom: 0;
+  width: 280px; background: var(--charcoal); z-index: 9000;
+  padding: 80px 40px; flex-direction: column; gap: 32px;
+  transition: right 0.4s cubic-bezier(.25,.46,.45,.94);
+}
+.mobile-nav.open { right: 0; }
+.mobile-nav a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s; }
+.mobile-nav a:hover { color: var(--gold-light); }
+.mobile-nav-close { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,0.5); font-size: 24px; cursor: pointer; background: none; border: none; }
+
+/* ═══════════════════════════════════════════
+   HERO — 60vh gallery intro banner
+   ═══════════════════════════════════════════ */
+.gallery-hero {
+  height: 60vh; min-height: 500px;
+  position: relative; display: flex; align-items: flex-end;
+  overflow: hidden; margin-top: 0;
+}
+.gallery-hero-bg {
+  position: absolute; inset: 0;
+  /* Indian bridal/ceremony image */
+  background: url('images/wedding-stage-botanical.jpg') center/cover no-repeat;
+  transform: scale(1.05);
+  animation: heroZoom 10s ease forwards;
+}
+@keyframes heroZoom { to { transform: scale(1); } }
+.gallery-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(44,38,32,0.9) 0%, rgba(44,38,32,0.3) 60%, transparent 100%);
+}
+/* Gold sweep diagonal */
+.gallery-hero-sweep {
+  position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 60%, rgba(184,154,114,0.12) 100%);
+}
+/* Decorative dot-chain border bottom of hero */
+.gallery-hero::after {
+  content: '——— ✦ ✦ ✦ ✦ ✦ ———';
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  text-align: center; font-size: 10px; letter-spacing: 5px;
+  color: rgba(212,184,150,0.35); pointer-events: none;
+}
+
+.gallery-hero-content {
+  position: relative; z-index: 2;
+  padding: 80px;
+  animation: fadeUp 0.9s 0.4s both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+.hero-breadcrumb {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold-light); margin-bottom: 16px; display: block;
+}
+.gallery-hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 8vw, 100px);
+  font-weight: 300; line-height: 0.9; color: #fff;
+}
+.gallery-hero h1 em { font-style: italic; color: var(--gold-light); }
+.hero-sub {
+  margin-top: 20px; font-size: 14px; letter-spacing: 1px;
+  color: rgba(255,255,255,0.55); font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════
+   CATEGORY FILTER BAR
+   Sticky below navbar; filters gallery items
+   ═══════════════════════════════════════════ */
+.filters {
+  position: sticky; top: 68px; z-index: 100;
+  background: var(--ivory);
+  padding: 24px 80px;
+  border-bottom: 1px solid var(--blush);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 24px;
+  border: 1px solid var(--blush);
+  background: none; cursor: pointer;
+  color: var(--warm-grey);
+  font-family: 'Jost', sans-serif;
+  transition: all 0.35s cubic-bezier(.25,.46,.45,.94);
+  position: relative; overflow: hidden;
+}
+.filter-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--charcoal);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+  z-index: 0;
+}
+.filter-btn:hover::before,
+.filter-btn.active::before { transform: scaleX(1); }
+.filter-btn span { position: relative; z-index: 1; }
+.filter-btn:hover,
+.filter-btn.active { color: #fff; border-color: var(--charcoal); }
+
+.filter-count {
+  font-size: 12px; letter-spacing: 1px; color: var(--warm-grey);
+  white-space: nowrap;
+}
+/* Small gold dot before count */
+.filter-count::before { content: '✦ '; color: var(--gold); }
+
+/* ═══════════════════════════════════════════
+   MASONRY GALLERY
+   CSS columns layout. Items fade-in on scroll
+   via IntersectionObserver.
+   ═══════════════════════════════════════════ */
+.gallery-section { padding: 60px 80px 120px; }
+.masonry { columns: 3; column-gap: 20px; }
+
+/* Each card */
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+  cursor: pointer; display: block;
+  /* Initial hidden state for scroll-reveal */
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.masonry-item.visible { opacity: 1; transform: translateY(0); }
+
+/* Image zoom on hover */
+.masonry-item img {
+  width: 100%; display: block;
+  transition: transform 0.7s cubic-bezier(.25,.46,.45,.94);
+}
+.masonry-item:hover img { transform: scale(1.06); }
+
+/* Overlay: appears on hover, shows event name */
+.masonry-item-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(44,38,32,0.88) 0%, rgba(44,38,32,0.12) 55%, transparent 100%);
+  opacity: 0; transition: opacity 0.5s ease;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 32px 28px;
+}
+.masonry-item:hover .masonry-item-overlay { opacity: 1; }
+
+.item-category {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold-light); margin-bottom: 8px;
+}
+.item-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; color: #fff; margin-bottom: 6px;
+}
+.item-sub { font-size: 12px; color: rgba(255,255,255,0.6); }
+
+/* Expand icon (+ rotates to × on hover) */
+.item-expand {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 20px;
+  opacity: 0;
+  transform: rotate(45deg) scale(0.7);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.masonry-item:hover .item-expand { opacity: 1; transform: rotate(0) scale(1); }
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX — full-screen detail view
+   Smooth zoom animation on open/close
+   ═══════════════════════════════════════════ */
+.lightbox {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(44,38,32,0.97);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.lightbox.open { opacity: 1; pointer-events: all; }
+.lightbox-inner {
+  display: flex; gap: 0;
+  max-width: 1100px; width: 95%;
+  max-height: 90vh;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(.25,.46,.45,.94);
+}
+.lightbox.open .lightbox-inner { transform: scale(1); }
+
+.lightbox-img-wrap {
+  flex: 0 0 58%;
+  position: relative; overflow: hidden;
+}
+.lightbox-img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.lightbox-info {
+  flex: 1; background: var(--ivory);
+  padding: 60px 48px;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow-y: auto;
+}
+#lbCategory {
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 20px; display: block;
+}
+#lbTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px; font-weight: 300;
+  color: var(--charcoal); line-height: 1.1; margin-bottom: 24px;
+}
+#lbDesc {
+  font-size: 14px; line-height: 1.9;
+  color: var(--warm-grey); font-weight: 300; margin-bottom: 36px;
+}
+.lb-meta {
+  display: flex; flex-direction: column; gap: 12px;
+  padding-top: 28px; border-top: 1px solid var(--blush);
+}
+.lb-meta-item {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: var(--charcoal);
+}
+.lb-meta-label {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); width: 68px; flex-shrink: 0;
+}
+.lightbox-close {
+  position: absolute; top: 24px; right: 28px;
+  background: none; border: none;
+  color: rgba(255,255,255,0.6); font-size: 28px;
+  cursor: pointer; transition: color 0.3s; z-index: 2;
+}
+.lightbox-close:hover { color: #fff; }
+/* Prev / Next navigation arrows */
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(44,38,32,0.6);
+  color: rgba(255,255,255,0.7); font-size: 20px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; z-index: 3;
+}
+.lb-nav:hover { background: rgba(184,154,114,0.5); border-color: var(--gold-light); color: #fff; }
+.lb-prev { left: 16px; }
+.lb-next { right: 16px; }
+
+/* ═══════════════════════════════════════════
+   NO-RESULTS MESSAGE
+   ═══════════════════════════════════════════ */
+.no-results {
+  display: none; text-align: center;
+  padding: 80px 20px;
+}
+.no-results h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; color: var(--charcoal); margin-bottom: 12px;
+}
+.no-results p { color: var(--warm-grey); font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   FEATURED QUOTE STRIP
+   ═══════════════════════════════════════════ */
+.featured-quote {
+  background: var(--charcoal);
+  padding: 100px 80px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+/* Decorative quotation mark watermark */
+.featured-quote::before {
+  content: '"';
+  position: absolute; top: -60px; left: -20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 300px; color: rgba(255,255,255,0.04);
+  line-height: 1; pointer-events: none;
+}
+.featured-quote blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 300; font-style: italic;
+  color: #fff; line-height: 1.4;
+  max-width: 900px; margin: 0 auto 28px;
+}
+.featured-quote blockquote em { color: var(--gold-light); font-style: normal; }
+.featured-quote cite {
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--warm-grey);
+}
+/* Reveal animation */
+.featured-quote.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s, transform 0.9s; }
+.featured-quote.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   CTA STRIP — bottom banner
+   ═══════════════════════════════════════════ */
+.cta-strip {
+  background: var(--cream);
+  padding: 100px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 40px; flex-wrap: wrap;
+  border-top: 1px solid var(--blush);
+}
+.cta-strip h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 68px);
+  font-weight: 300; color: var(--charcoal);
+}
+.cta-strip h2 em { font-style: italic; color: var(--rose); }
+.cta-strip p { font-size: 14px; color: var(--warm-grey); line-height: 1.8; margin-top: 16px; max-width: 420px; }
+.cta-btn {
+  display: inline-block;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: #fff; background: var(--charcoal);
+  padding: 20px 52px;
+  text-decoration: none;
+  position: relative; overflow: hidden;
+  transition: all 0.4s;
+  white-space: nowrap;
+}
+.cta-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold-deep);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s ease;
+}
+.cta-btn:hover::before { transform: scaleX(1); }
+.cta-btn span { position: relative; z-index: 1; }
+/* Reveal */
+.reveal-left  { opacity:0; transform:translateX(-50px); transition: opacity 0.9s ease, transform 0.9s ease; }
+.reveal-right { opacity:0; transform:translateX(50px);  transition: opacity 0.9s ease, transform 0.9s ease; }
+.reveal-left.visible, .reveal-right.visible { opacity:1; transform:none; }
+
+/* ═══════════════════════════════════════════
+   MINI FOOTER
+   ═══════════════════════════════════════════ */
+.footer-mini {
+  background: var(--charcoal);
+  padding: 40px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.footer-mini-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300;
+  letter-spacing: 4px; color: #fff;
+  text-decoration: none;
+}
+.footer-mini-copy { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
+.footer-mini-link {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold-light); text-decoration: none;
+  transition: color 0.3s; cursor: pointer;
+}
+.footer-mini-link:hover { color: #fff; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .masonry { columns: 2; }
+  .gallery-section { padding: 60px 40px 100px; }
+  .filters { padding: 20px 40px; }
+}
+@media (max-width: 768px) {
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .gallery-hero-content { padding: 60px 24px; }
+  .filters { padding: 16px 20px; }
+  .masonry { columns: 1; }
+  .gallery-section { padding: 40px 20px 80px; }
+  .lightbox-inner { flex-direction: column; max-height: 95vh; }
+  .lightbox-img-wrap { flex: 0 0 45%; }
+  .lightbox-info { padding: 32px 28px; }
+  .featured-quote { padding: 70px 24px; }
+  .cta-strip { padding: 70px 24px; flex-direction: column; }
+  .footer-mini { padding: 32px 24px; flex-direction: column; text-align: center; }
+  .mobile-nav { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE ENTRANCE (wipes down to reveal page) ── -->
+<div class="page-enter" id="pageEnter"></div>
+<div class="page-transition-overlay" id="pageOverlay"></div>
+
+<!-- ── CUSTOM CURSOR ── -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ── MOBILE NAV DRAWER ── -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+  <a onclick="goHome(event)">← Back to Home</a>
+  <a href="#gallery" onclick="closeMobileNav()">Gallery</a>
+  <a href="#contact" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- ══════════════════════════════
+     NAVBAR
+     ══════════════════════════════ -->
+<nav id="navbar">
+  <!--
+    Back to Home arrow — triggers smooth page-exit transition
+    then navigates back to landing page
+  -->
+  <a class="nav-back" onclick="goHome(event)">Back to Home</a>
+  <a href="landingpage.html" class="nav-logo">De Décor</a>
+  <ul class="nav-links">
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact" onclick="goHome(event,'landingpage.html#contact')">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburgerBtn">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════
+     GALLERY HERO
+     ══════════════════════════════ -->
+<section class="gallery-hero">
+  <div class="gallery-hero-bg"></div>
+  <div class="gallery-hero-overlay"></div>
+  <div class="gallery-hero-sweep"></div>
+  <div class="gallery-hero-content">
+    <span class="hero-breadcrumb">De Décor · Our Portfolio</span>
+    <h1>Indian <em>Wedding</em><br>Planning</h1>
+    <p class="hero-sub">Haldi · Mehendi · Sangeet · Baraat · Sacred Ceremonies</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     STICKY CATEGORY FILTERS
+     ══════════════════════════════ -->
+<div class="filters" id="filtersBar">
+  <div class="filter-group">
+    <!--
+      Filter buttons — JS toggles .active class,
+      hides/shows gallery items by data-category attr
+    -->
+    <button class="filter-btn active" data-filter="all"><span>All Events</span></button>
+    <button class="filter-btn" data-filter="haldi"><span>Haldi</span></button>
+    <button class="filter-btn" data-filter="mehendi"><span>Mehendi</span></button>
+    <button class="filter-btn" data-filter="sangeet"><span>Sangeet</span></button>
+    <button class="filter-btn" data-filter="wedding"><span>Wedding</span></button>
+    <button class="filter-btn" data-filter="baraat"><span>Baraat</span></button>
+    <button class="filter-btn" data-filter="portrait"><span>Portraits</span></button>
+  </div>
+  <span class="filter-count" id="filterCount">18 Events</span>
+</div>
+
+<!-- ══════════════════════════════
+     MASONRY GALLERY
+     Each item:  data-category  → used by filter
+                 data-img       → used by lightbox (high-res)
+                 data-title/desc/location/guests/theme → lightbox info
+     ══════════════════════════════ -->
+<section class="gallery-section" id="gallery">
+  <div class="masonry" id="masonryGrid">
+
+    <!-- HALDI -->
+    <div class="masonry-item" data-category="haldi"
+         data-title="Pastel Canopy Haldi"
+         data-desc="A beautiful Haldi setup featuring a plush seating area beneath delicate pink and yellow sheer drapes. The space is vibrant with colourful floral accents on a pink mandala-patterned floor."
+         data-location="Panvel, Navi Mumbai" data-guests="80 Guests" data-theme="Pastel Haldi · Pink & Yellow"
+         data-img="images/haldi.jpg">
+      <img src="images/haldi.jpg" alt="Pastel Canopy Haldi">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Haldi</span>
+        <div class="item-title">Pastel Canopy Haldi</div>
+        <div class="item-sub">Navi Mumbai · 80 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- MEHENDI -->
+    <div class="masonry-item" data-category="mehendi"
+         data-title="Vibrant Marigold Mehendi"
+         data-desc="A vibrant Mehendi set-up featuring a lush purple velvet couch on a bright pink patterned rug, accented by carved wooden screens draped with thick orange marigold garlands and colorful floral blooms."
+         data-location="Navi Mumbai" data-guests="60 Guests" data-theme="Intimate · Vibrant Colors"
+         data-img="images/mehedi.jpg">
+      <img src="images/mehedi.jpg" alt="Vibrant Marigold Mehendi">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Mehendi</span>
+        <div class="item-title">Vibrant Marigold Mehendi</div>
+        <div class="item-sub">Navi Mumbai · 60 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Heritage Banyan Ceremony"
+         data-desc="An enchanting outdoor ceremony under a majestic banyan tree. The seating is arranged with open cross-back wooden chairs with white floral drapes, under an overhead array of hanging white and pink strings."
+         data-location="Vashi, Navi Mumbai" data-guests="250 Guests" data-theme="Outdoor Heritage · Botanical"
+         data-img="images/wedding.jpg">
+      <img src="images/wedding.jpg" alt="Heritage Banyan Ceremony">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Heritage Banyan Ceremony</div>
+        <div class="item-sub">Navi Mumbai · 250 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- SANGEET -->
+    <div class="masonry-item" data-category="sangeet"
+         data-title="Elegant White Sangeet"
+         data-desc="An elegant Sangeet dining setup featuring white cloth-draped chairs, tables wrapped in green vines, glowing candles, and towering lush white floral centerpieces beneath a fairy-lit canopy."
+         data-location="Mumbai" data-guests="200 Guests" data-theme="Elegant Neutral · Fairy Lights"
+         data-img="images/sangeet.jpg">
+      <img src="images/sangeet.jpg" alt="Elegant White Sangeet">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Sangeet</span>
+        <div class="item-title">Elegant White Sangeet</div>
+        <div class="item-sub">Mumbai · 200 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- BARAAT -->
+    <div class="masonry-item" data-category="baraat"
+         data-title="Grand Bridal Entry"
+         data-desc="Spectacular entry of the wedding featuring the bride gracefully arriving on a traditional floral-adorned palanquin. She is carried by escorts in festive green attire with a backdrop of brilliant fireworks."
+         data-location="Thane City" data-guests="250 Guests" data-theme="Grand Entry · Fireworks"
+         data-img="images/baraat.JPG">
+      <img src="images/baraat.JPG" alt="Grand Bridal Entry">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Baraat</span>
+        <div class="item-title">Grand Bridal Entry</div>
+        <div class="item-sub">Thane · 250 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- PORTRAIT -->
+    <div class="masonry-item" data-category="portrait"
+         data-title="Bridal Portrait Session"
+         data-desc="A stunning bridal portrait series in traditional Banarasi silk saree, heavy gold jewellery and maang tikka, set against a heritage haveli backdrop with arched windows and carved marble."
+         data-location="Bandra Heritage Bungalow" data-guests="Private Session" data-theme="Traditional Bridal · Portrait"
+         data-img="images/wedding-outdoor-ceremony.jpg">
+      <img src="images/wedding-outdoor-ceremony.jpg" alt="Bridal Portrait">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Portrait</span>
+        <div class="item-title">Bridal Portrait Session</div>
+        <div class="item-sub">Mumbai · Private</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Elegant Rose Aisle"
+         data-desc="A beautifully precise seating arrangement for the ceremony. Crisp white slipcovers on chairs are elevated by soft coral pink chiffon sashes and a single white rose gracefully pinned at back."
+         data-location="Nerul, Navi Mumbai" data-guests="120 Guests" data-theme="Elegant Coastal · Pink Chiffon"
+         data-img="images/wedding1.jpg">
+      <img src="images/wedding1.jpg" alt="Elegant Rose Aisle">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Elegant Rose Aisle</div>
+        <div class="item-sub">Thane · 120 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- SANGEET -->
+    <div class="masonry-item" data-category="sangeet"
+         data-title="Glamorous Mirrored Bar"
+         data-desc="A spectacular mirrored-mosaic bar setup glimmering in an ambient evening reception. Elegant white floral arrangements and soft scattered candlelights complete the glamorous evening."
+         data-location="Ghodbunder, Thane" data-guests="180 Guests" data-theme="Ambient Glamour · Mirrored"
+         data-img="images/sangeet1.jpg">
+      <img src="images/sangeet1.jpg" alt="Glamorous Mirrored Bar">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Sangeet</span>
+        <div class="item-title">Glamorous Mirrored Bar</div>
+        <div class="item-sub">Navi Mumbai · 180 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- HALDI -->
+    <div class="masonry-item" data-category="haldi"
+         data-title="Haldi Welcome Signage"
+         data-desc="A picturesque welcome arrangement for Vicky and Harshini's Haldi. Elegant light pink arched boards are adorned with delicate baby's breath and vibrant floral baskets."
+         data-location="Kalyan, Thane" data-guests="70 Guests" data-theme="Modern Welcome · Soft Pastels"
+         data-img="images/haldi2.jpg">
+      <img src="images/haldi2.jpg" alt="Haldi Welcome Signage">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Haldi</span>
+        <div class="item-title">Haldi Welcome Signage</div>
+        <div class="item-sub">Mumbai · 70 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Lush Floral Aisle"
+         data-desc="A low-angle view highlighting a stunningly dense floral runner along the wedding aisle. Broad banana leaves create a base for delicate pink and white blooms, framing the wooden guest seating."
+         data-location="Thane City" data-guests="300 Guests" data-theme="Lush Botanical · Pink & White"
+         data-img="images/wedding2.jpg">
+      <img src="images/wedding2.jpg" alt="Lush Floral Aisle">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Lush Floral Aisle</div>
+        <div class="item-sub">Thane · 300 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- PORTRAIT -->
+    <div class="masonry-item" data-category="portrait"
+         data-title="Heritage Mirror Vignette"
+         data-desc="Exquisite intimate décor vignette — carved Rajasthani mirror, golden temple spires, brass lamps, and white tuberose bouquets. The couple posed in their traditional wedding attire."
+         data-location="Ghansoli" data-guests="Private" data-theme="Intimate · Heritage Craft"
+         data-img="images/wedding-stage-botanical.jpg">
+      <img src="images/wedding-stage-botanical.jpg" alt="Heritage Portrait">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Portrait</span>
+        <div class="item-title">Heritage Mirror Vignette</div>
+        <div class="item-sub">Mumbai · Private</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- MEHENDI -->
+    <div class="masonry-item" data-category="mehendi"
+         data-title="Colorful Canopy Mehendi"
+         data-desc="A dynamic and colorful Mehendi setting shaded by stunning pink and teal fabric drapings. It features hanging garlands, an intricate teal backdrop panel, cane screens, and fresh garden blooms."
+         data-location="Bandra Studio Garden" data-guests="90 Guests" data-theme="Garden Mehendi · Bright Canopy"
+         data-img="images/mehnedi.jpg">
+      <img src="images/mehnedi.jpg" alt="Colorful Canopy Mehendi">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Mehendi</span>
+        <div class="item-title">Colorful Canopy Mehendi</div>
+        <div class="item-sub">Mumbai · 90 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- BARAAT -->
+    <div class="masonry-item" data-category="baraat"
+         data-title="Epic Varmala Under Arch"
+         data-desc="A breathtaking entry of the wedding moment. The couple stands under a colossal arch of red roses illuminated by magnificent fireworks and falling petals as they prepare for the varmala."
+         data-location="Mumbai" data-guests="300 Guests" data-theme="Varmala Entry · Red Arch"
+         data-img="images/baraat1.JPG">
+      <img src="images/baraat1.JPG" alt="Epic Varmala Under Arch">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Baraat</span>
+        <div class="item-title">Epic Varmala Under Arch</div>
+        <div class="item-sub">Mumbai · 300 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- BARAAT -->
+    <div class="masonry-item" data-category="baraat"
+         data-title="Royal Groom Procession"
+         data-desc="A majestic entry of the wedding! The groom arrives atop an opulent golden platform carried by his entourage in white and red, with cold pyrotechnics making this baraat procession unforgettable."
+         data-location="Thane Palace" data-guests="200 Guests" data-theme="Royal Baraat · Golden Entry"
+         data-img="images/baraat2.JPG">
+      <img src="images/baraat2.JPG" alt="Royal Groom Entry">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Baraat</span>
+        <div class="item-title">Royal Groom Procession</div>
+        <div class="item-sub">Thane · 200 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- BARAAT -->
+    <div class="masonry-item" data-category="baraat"
+         data-title="Colorful Adiyogi Entry"
+         data-desc="An awe-inspiring entry of the wedding moment. The couple stands in front of a monumental Lord Shiva statue, perfectly framed by incredible daytime fireworks and incredibly vibrant rainbow smoke plumes."
+         data-location="Airoli Center" data-guests="400 Guests" data-theme="Spiritual Entry · Colorful Smoke"
+         data-img="images/baraat4.JPG">
+      <img src="images/baraat4.JPG" alt="Colorful Adiyogi Entry">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Baraat</span>
+        <div class="item-title">Colorful Adiyogi Entry</div>
+        <div class="item-sub">Mumbai · 400 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- BARAAT -->
+    <div class="masonry-item" data-category="baraat"
+         data-title="Rose Petal Varmala"
+         data-desc="A magical entry of the wedding ceremony moment. As the bride and groom exchange the varmala in front of the serene statue, a heavy shower of red rose petals rains down majestically."
+         data-location="Airoli Center" data-guests="400 Guests" data-theme="Spiritual Entry · Rose Shower"
+         data-img="images/baraat5.JPG">
+      <img src="images/baraat5.JPG" alt="Rose Petal Varmala">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Baraat</span>
+        <div class="item-title">Rose Petal Varmala</div>
+        <div class="item-sub">Mumbai · 400 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Traditional Brass Kalash"
+         data-desc="Traditional golden brass kalash pots are artfully stacked into pillars, adorned with vivid pink carnation rings. Set among fresh greens and soft pink florals, creating a classic welcoming aura."
+         data-location="Panvel, Navi Mumbai" data-guests="500 Guests" data-theme="Traditional Decor · Brass & Pink"
+         data-img="images/weddin3.jpg">
+      <img src="images/weddin3.jpg" alt="Traditional Brass Kalash">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Traditional Brass Kalash</div>
+        <div class="item-sub">Navi Mumbai · 500 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- HALDI -->
+    <div class="masonry-item" data-category="haldi"
+         data-title="Sunflower Haldi Rite"
+         data-desc="A cheerful Haldi ceremony in a flower-strewn courtyard — sunflowers, calendula, and yellow roses framing the ritual seating. The bride was adorned with fresh flower jewellery."
+         data-location="Kalyan" data-guests="50 Guests" data-theme="Intimate Haldi · Floral Folk"
+         data-img="images/wedding-outdoor-ceremony.jpg">
+      <img src="images/wedding-outdoor-ceremony.jpg" alt="Sunflower Haldi">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Haldi</span>
+        <div class="item-title">Sunflower Haldi Rite</div>
+        <div class="item-sub">Mumbai · 50 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- SANGEET -->
+    <div class="masonry-item" data-category="sangeet"
+         data-title="Disco Floral Lounge"
+         data-desc="A gorgeous contemporary Sangeet seating area where a plush grey lounge couch is enveloped by an array of lush white blooms, green foliage, and fun reflective disco balls."
+         data-location="Panvel Resort" data-guests="350 Guests" data-theme="Modern Whimsy · Disco Florals"
+         data-img="images/sangeet2.jpg">
+      <img src="images/sangeet2.jpg" alt="Disco Floral Lounge">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Sangeet</span>
+        <div class="item-title">Disco Floral Lounge</div>
+        <div class="item-sub">Navi Mumbai · 350 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- PORTRAIT -->
+    <div class="masonry-item" data-category="portrait"
+         data-title="Couple Varmala Moment"
+         data-desc="A tender varmala (garland exchange) portrait capturing the couple draped in fresh marigold and rose garlands, eyes full of love and shy smiles — a timeless Indian wedding tradition."
+         data-location="Vashi Lakeside" data-guests="Private" data-theme="Wedding Portrait · Varmala"
+         data-img="images/wedding-seating-pink-flowers.jpg">
+      <img src="images/wedding-seating-pink-flowers.jpg" alt="Varmala Portrait">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Portrait</span>
+        <div class="item-title">Varmala Moment</div>
+        <div class="item-sub">Thane · Private</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- MEHENDI -->
+    <div class="masonry-item" data-category="mehendi"
+         data-title="Haveli Mehendi Ceremony"
+         data-desc="An ornate Mehendi ceremony in the courtyard of a painted Shekhawati haveli. Intricate mirror-work canopies, gota-patti pillows, and peacock motif lanterns created a regal ambience."
+         data-location="Thane Estate" data-guests="75 Guests" data-theme="Heritage Mehendi · Haveli"
+         data-img="images/wedding-stage-botanical.jpg">
+      <img src="images/wedding-stage-botanical.jpg" alt="Haveli Mehendi">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Mehendi</span>
+        <div class="item-title">Haveli Mehendi Ceremony</div>
+        <div class="item-sub">Mumbai · 75 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Pastel Garden Seating"
+         data-desc="An expansive outdoor ceremony setup featuring plush velvet lounge seating adorned with vibrant pink cushions. Towering floral arches and a breathtaking canopy of jasmine and rose strings create an immersive garden experience."
+         data-location="Bandra" data-guests="450 Guests" data-theme="Garden Splendor · Pastel Pink"
+         data-img="images/wedding-seating-pink-flowers.jpg">
+      <img src="images/wedding-seating-pink-flowers.jpg" alt="Pastel Garden Seating">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Pastel Garden Seating</div>
+        <div class="item-sub">Navi Mumbai · 450 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Botanical Painted Backdrop"
+         data-desc="An elegant outdoor setting bathed in afternoon sunlight, showcasing sage green padded chairs arranged before a bespoke trio of arched backdrop panels perfectly painted with floral motifs."
+         data-location="Nerul Gardens" data-guests="300 Guests" data-theme="Outdoor Botanical · Painted Arches"
+         data-img="images/wedding-outdoor-ceremony.jpg">
+      <img src="images/wedding-outdoor-ceremony.jpg" alt="Botanical Painted Backdrop">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Botanical Painted Backdrop</div>
+        <div class="item-sub">Thane · 300 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="masonry-item" data-category="wedding"
+         data-title="Whimsical Lamp Decor"
+         data-desc="A beautifully quirky wedding corner setup showcasing oversized pastel-colored lampshades with dotted patterns in soft blue, pink, and yellow, beautifully complementing a floral print loveseat."
+         data-location="Panvel Studio" data-guests="150 Guests" data-theme="Whimsical Decor · Pastel Play"
+         data-img="images/wedding-decor-floral-lamps.jpg">
+      <img src="images/wedding-decor-floral-lamps.jpg" alt="Whimsical Lamp Decor">
+      <div class="masonry-item-overlay">
+        <span class="item-category">Wedding</span>
+        <div class="item-title">Whimsical Lamp Decor</div>
+        <div class="item-sub">Mumbai Studio · 150 Guests</div>
+      </div>
+      <div class="item-expand">+</div>
+    </div>
+
+  </div><!-- /masonry -->
+
+  <!-- No results placeholder (shown when filtered category has 0 items) -->
+  <div class="no-results" id="noResults">
+    <h3>No events yet</h3>
+    <p>Try a different filter to explore our portfolio</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     FEATURED QUOTE
+     ══════════════════════════════ -->
+<div class="featured-quote reveal">
+  <blockquote>
+    "We don't just create events —<br>we create <em>experiences</em> that<br>last a lifetime."
+  </blockquote>
+  <cite>De Décor · Est. 2018</cite>
+</div>
+
+<!-- ══════════════════════════════
+     CTA STRIP — links back to contact on landing
+     ══════════════════════════════ -->
+<div class="cta-strip" id="contact">
+  <div class="reveal-left">
+    <h2>Ready to write<br>your <em>love story?</em></h2>
+    <p>Every couple is unique, every wedding is different. Let's start with a conversation about your vision.</p>
+  </div>
+  <a onclick="goHome(event,'landingpage.html#contact')" class="cta-btn reveal-right">
+    <span>Begin Planning</span>
+  </a>
+</div>
+
+<!-- ══════════════════════════════
+     LIGHTBOX
+     Clicking a gallery item opens this
+     ══════════════════════════════ -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose">✕</button>
+  <button class="lb-nav lb-prev" onclick="navLightbox(-1)">←</button>
+  <button class="lb-nav lb-next" onclick="navLightbox(1)">→</button>
+  <div class="lightbox-inner">
+    <div class="lightbox-img-wrap">
+      <img src="" alt="" id="lbImg">
+    </div>
+    <div class="lightbox-info">
+      <span id="lbCategory"></span>
+      <div id="lbTitle"></div>
+      <p id="lbDesc"></p>
+      <div class="lb-meta">
+        <div class="lb-meta-item">
+          <span class="lb-meta-label">Location</span>
+          <span id="lbLocation"></span>
+        </div>
+        <div class="lb-meta-item">
+          <span class="lb-meta-label">Guests</span>
+          <span id="lbGuests"></span>
+        </div>
+        <div class="lb-meta-item">
+          <span class="lb-meta-label">Theme</span>
+          <span id="lbTheme"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     MINI FOOTER
+     ══════════════════════════════ -->
+<footer class="footer-mini">
+  <a href="landingpage.html" class="footer-mini-logo">De Décor</a>
+  <span class="footer-mini-copy" style="font-weight:600; color:#d4b896; margin-bottom: 8px; display: block;">Panvel based, serving MMR only</span>
+  <span class="footer-mini-copy">© 2025 De Décor Events & Wedding Planners</span>
+  <!--
+    Back to Home uses navigateTo-style smooth transition
+  -->
+  <a class="footer-mini-link" onclick="goHome(event)">← Back to Home</a>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+     ══════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────
+   PAGE ENTER animation:
+   Remove the dark curtain after 800ms so it
+   slides up and reveals the page below.
+   ───────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const el = document.getElementById('pageEnter');
+    if (el) el.remove();
+  }, 800);
+});
+
+/* ─────────────────────────────────────────────
+   SMOOTH BACK-TO-HOME NAVIGATION
+   Shows a dark overlay, then navigates.
+   ───────────────────────────────────────────── */
+function goHome(e, url) {
+  e.preventDefault();
+  const dest = url || 'landingpage.html';
+  const overlay = document.getElementById('pageOverlay');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = dest; }, 580);
+}
+
+/* ─────────────────────────────────────────────
+   CUSTOM CURSOR
+   ───────────────────────────────────────────── */
+const cursor    = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform     = `translate(${e.clientX - 6}px, ${e.clientY - 6}px)`;
+  cursorRing.style.transform = `translate(${e.clientX - 18}px, ${e.clientY - 18}px)`;
+});
+
+/* ─────────────────────────────────────────────
+   MOBILE HAMBURGER
+   ───────────────────────────────────────────── */
+document.getElementById('hamburgerBtn').addEventListener('click', () => {
+  document.getElementById('mobileNav').classList.add('open');
+});
+document.getElementById('mobileNavClose').addEventListener('click', closeMobileNav);
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+}
+
+/* ─────────────────────────────────────────────
+   GALLERY DATA & FILTERING
+   Buttons toggle .active, JS hides/shows
+   items with CSS transitions.
+   ───────────────────────────────────────────── */
+const items = document.querySelectorAll('.masonry-item');
+let filteredItems = Array.from(items);
+let currentLbIdx = 0;
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+
+    const filter = this.dataset.filter;
+    filteredItems = [];
+
+    items.forEach((item, i) => {
+      const cat  = item.dataset.category;
+      const show = filter === 'all' || cat === filter;
+
+      if (show) {
+        // Stagger re-appearance for smooth cascade effect
+        item.style.display = 'block';
+        item.classList.remove('visible');
+        setTimeout(() => item.classList.add('visible'), i * 55);
+        filteredItems.push(item);
+      } else {
+        item.classList.remove('visible');
+        // Hide after transition
+        setTimeout(() => { if (!filteredItems.includes(item)) item.style.display = 'none'; }, 400);
+      }
+    });
+
+    document.getElementById('filterCount').textContent = filteredItems.length + ' Events';
+    document.getElementById('noResults').style.display = filteredItems.length === 0 ? 'block' : 'none';
+  });
+});
+
+/* ─────────────────────────────────────────────
+   LIGHTBOX — open, close, prev/next
+   ───────────────────────────────────────────── */
+// Map all items to an array for index-based navigation
+const allItems = Array.from(items);
+
+allItems.forEach((item, idx) => {
+  item.addEventListener('click', () => openLightbox(idx));
+});
+
+function openLightbox(idx) {
+  currentLbIdx = idx;
+  const item = allItems[idx];
+  document.getElementById('lbImg').src         = item.dataset.img;
+  document.getElementById('lbImg').alt         = item.dataset.title;
+  document.getElementById('lbCategory').textContent = item.dataset.category.charAt(0).toUpperCase() + item.dataset.category.slice(1);
+  document.getElementById('lbTitle').textContent    = item.dataset.title;
+  document.getElementById('lbDesc').textContent     = item.dataset.desc;
+  document.getElementById('lbLocation').textContent = item.dataset.location;
+  document.getElementById('lbGuests').textContent   = item.dataset.guests;
+  document.getElementById('lbTheme').textContent    = item.dataset.theme;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function navLightbox(dir) {
+  // Navigate only through currently filtered items
+  const fIdx = filteredItems.indexOf(allItems[currentLbIdx]);
+  const newFIdx = (fIdx + dir + filteredItems.length) % filteredItems.length;
+  const newItem = filteredItems[newFIdx];
+  const newIdx  = allItems.indexOf(newItem);
+  openLightbox(newIdx);
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowRight') navLightbox(1);
+  if (e.key === 'ArrowLeft')  navLightbox(-1);
+});
+
+/* ─────────────────────────────────────────────
+   INTERSECTION OBSERVER — scroll-triggered
+   fade-in for gallery cards and other .reveal
+   elements (quote, CTA section, etc.)
+   ───────────────────────────────────────────── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // Stagger by 80ms per item for a cascade feel
+      setTimeout(() => entry.target.classList.add('visible'), 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+items.forEach(item => observer.observe(item));
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+</script>
+<style>
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  color: #FFF;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  color: #FFF;
+}
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+</style>
+<a href="https://wa.me/919004974333" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="34" height="34" fill="currentColor">
+    <path d="M16 2.75C8.683 2.75 2.75 8.683 2.75 16A13.18 13.18 0 004.88 22.8L2.99 29.54a1.25 1.25 0 001.53 1.5l6.45-2.03A13.16 13.16 0 0016 29.25c7.317 0 13.25-5.933 13.25-13.25S23.317 2.75 16 2.75zm0 24A10.7 10.7 0 0110.15 25a1.25 1.25 0 00-.91-.18l-4.5 1.42 1.32-4.71a1.25 1.25 0 00-.08-1A10.7 10.7 0 1116 26.75z"/>
+    <path d="M21.57 19.34l-2.08-1c-.34-.16-.62-.27-.88.13l-1.07 1.34c-.16.2-.38.25-.66.11a8.94 8.94 0 01-4.73-4.14c-.18-.32.09-.34.33-.7l.38-.47c.07-.1.08-.2.03-.31-.05-.12-.47-1.12-.66-1.55-.17-.4-.36-.44-.65-.45h-.54c-.26 0-.68.1-1.03.48-.35.38-1.34 1.31-1.34 3.19s1.37 3.7 1.56 3.96c.2.25 2.73 4.18 6.64 5.86.93.4 1.66.64 2.22.82 2 .61 3.52.29 4.3-.09.84-.42 2.08-.85 2.37-1.68.3-.82.3-1.53.21-1.67-.1-.15-.36-.24-.7-.4z"/>
+  </svg>
+</a>
+</body>
+</html>
+
